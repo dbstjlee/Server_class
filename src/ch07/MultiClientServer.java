@@ -16,9 +16,7 @@ public class MultiClientServer {
 
 	public static void main(String[] args) {
 		System.out.println("Server started....");
-
 		try (ServerSocket serverSocket = new ServerSocket(PORT);) { // 여기 안에 포트 번호를 할당함.
-
 			while (true) {
 				Socket socket = serverSocket.accept(); // 새로운 소켓을 생성함.
 				// input, output을 클래스화시켜서 묶어버리기.
@@ -47,7 +45,6 @@ public class MultiClientServer {
 				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				out = new PrintWriter(socket.getOutputStream(), true);
 
-				// 코드 추가
 				// 클라이언트로부터 이름 받기(약속되어 있음)
 				String nameMessage = in.readLine();
 				if (nameMessage != null && nameMessage.startsWith("NAME:")) {// startsWith: 시작하는 문자열이
@@ -60,7 +57,6 @@ public class MultiClientServer {
 					// "NAME:" 이거 먼저 보내야 하는데 안 보내면
 					socket.close();
 					return;
-
 				}
 				// 여기서 중요! - 서버가 관리하는 자료구조에 자원 저장(클라이언트와 연결된 소켓 -> outputStream)
 				clientWriters.add(out);
@@ -80,27 +76,21 @@ public class MultiClientServer {
 					String command = parts[0];
 					// 데이터 부분을 분리시킴
 					String data = parts.length > 1 ? parts[1] : "";
-
 					if (command.equals("MSG")) {
 						System.out.println("연결된 전체 사용자에게 MSG 방송");
 						broadcastMessage(message);
-
 					} else if (command.equals("BYE")) {
-
 						System.out.println("Client disconnected...");
 						break; // while 구문 종료...
-
 						// broadcastMessage(message);
 					}
 				} // end of while
 			} catch (
-
 			Exception e) {
 				// e.printStackTrace();
 			} finally {
 				try {
 					socket.close();
-					// 도전과제?
 					// 서버측에서 관리하고 있는 P.W 제거해야 한다.
 					// 인덱스 번호가 필요하다.
 					// clientWriters.add() 할 때 지정된 나의 인덱스 번호가 필요
@@ -111,7 +101,6 @@ public class MultiClientServer {
 				}
 			}
 		} // end of ClientHandler
-
 		// 모든 클라이언트에게 메시지 보내기 - 브로드캐스트
 		private static void broadcastMessage(String message) {
 			for (PrintWriter writer : clientWriters) {
